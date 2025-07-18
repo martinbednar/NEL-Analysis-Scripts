@@ -2,16 +2,24 @@ QUERY_NEL_DATA_HEADER_1_DESKTOP = r"""
 -- SELECT ALL DATA TO BE PROCESSED
 WITH httparchive_full_month AS (
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
 
-  FROM `%s`
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'desktop'
 )
 """
 
@@ -19,30 +27,46 @@ QUERY_NEL_DATA_HEADER_1_DESKTOP_1_MOBILE = r"""
 -- SELECT ALL DATA TO BE PROCESSED
 WITH httparchive_full_month AS (
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
 
-  FROM `%s`
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'desktop'
   
   UNION ALL 
 
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
-    
-  FROM `%s`
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
+
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'mobile'
 )
 """
 
@@ -50,44 +74,68 @@ QUERY_NEL_DATA_HEADER_2_DESKTOP_1_MOBILE = r"""
 -- SELECT ALL DATA TO BE PROCESSED
 WITH httparchive_full_month AS (
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
 
-  FROM `%s`
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'desktop'
   
   UNION ALL 
 
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
-    
-  FROM `%s`
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
+
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'desktop'
 
   UNION ALL 
 
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
-    
-  FROM `%s`
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
+
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'mobile'
 )
 """
 
@@ -95,58 +143,90 @@ QUERY_NEL_DATA_HEADER_2_DESKTOP_2_MOBILE = r"""
 -- SELECT ALL DATA TO BE PROCESSED
 WITH httparchive_full_month AS (
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
 
-  FROM `%s`
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'desktop'
   
   UNION ALL 
 
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
-    
-  FROM `%s`
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
+
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'desktop'
 
   UNION ALL 
 
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
-    
-  FROM `%s`
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
+
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'mobile'
   
   UNION ALL 
 
   SELECT 
-    requestid,
-    firstReq,
+    ROW_NUMBER() OVER (ORDER BY url) AS requestid,
+    is_main_document AS firstReq,
     type,
-    ext,
+    STRING(summary.ext) AS ext,
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
-    status,
-    LOWER(respOtherHeaders) resp_headers,
-    
-  FROM `%s`
+    INT64(summary.status) AS status,
+    LOWER(
+      ARRAY_TO_STRING(
+        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
+        '; '
+      )
+    ) AS resp_headers
+
+  FROM `httparchive.crawl.requests`
+  
+  WHERE date = `%s` AND
+  client = 'mobile'
 )
 """
 

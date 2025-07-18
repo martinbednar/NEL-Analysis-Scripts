@@ -25,13 +25,13 @@ description:    Query the Google Cloud Platform's BigQuery for HTTP Archive data
                         [
                             {
                                 "input_desktop": [
-                                  "httparchive.summary_requests.2018_09_01_desktop",
-                                  "httparchive.summary_requests.2018_09_15_desktop"
+                                  "2018-09-01",
+                                  "2018-09-15"
                                 ],
 
                                 "input_mobile": [
-                                  "httparchive.summary_requests.2018_09_01_mobile",
-                                  "httparchive.summary_requests.2018_09_15_mobile"
+                                  "2018-09-01-mobile",
+                                  "2018-09-15-mobile"
                                 ],
 
                                 "processed_output": "nel_data_2018_09"
