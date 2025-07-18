@@ -18,7 +18,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'desktop'
 )
 """
@@ -43,7 +43,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'desktop'
   
   UNION ALL 
@@ -65,7 +65,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'mobile'
 )
 """
@@ -90,7 +90,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'desktop'
   
   UNION ALL 
@@ -112,7 +112,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'desktop'
 
   UNION ALL 
@@ -134,7 +134,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'mobile'
 )
 """
@@ -159,7 +159,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'desktop'
   
   UNION ALL 
@@ -181,7 +181,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'desktop'
 
   UNION ALL 
@@ -203,7 +203,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'mobile'
   
   UNION ALL 
@@ -225,7 +225,7 @@ WITH httparchive_full_month AS (
 
   FROM `httparchive.crawl.requests`
   
-  WHERE date = `%s` AND
+  WHERE date = '%s' AND
   client = 'mobile'
 )
 """
