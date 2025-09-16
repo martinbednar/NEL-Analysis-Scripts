@@ -9,12 +9,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -34,12 +29,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -56,12 +46,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -81,12 +66,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -103,12 +83,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -125,12 +100,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -150,12 +120,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -172,12 +137,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -194,12 +154,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -216,12 +171,7 @@ WITH httparchive_full_month AS (
     url,
     REGEXP_EXTRACT(url, r"http[s]?:[\/][\/]([^\/:]+)") AS url_domain,
     INT64(summary.status) AS status,
-    LOWER(
-      ARRAY_TO_STRING(
-        ARRAY(SELECT CONCAT(response_header.name, ' = ', response_header.value) FROM UNNEST(response_headers) AS response_header),
-        '; '
-      )
-    ) AS resp_headers
+    response_headers
 
   FROM `httparchive.crawl.requests`
   
@@ -282,7 +232,7 @@ FROM (
       type,
       ext,
       status,
-      resp_headers,
+      response_headers,
       url,
       url_domain,
 
@@ -330,7 +280,7 @@ FROM (
       type,
       ext,
       status,
-      resp_headers,
+      response_headers,
       url,
       url_domain,
 
@@ -339,11 +289,20 @@ FROM (
       total_crawled_resources,
       total_crawled_domains,
 
-      REGEXP_CONTAINS(resp_headers, r"(?:^|.*[\s,]+)(nel\s*[=]\s*)") AS contains_nel,
+      EXISTS (
+        SELECT 1
+        FROM UNNEST(response_headers) AS header
+        WHERE header.name = 'nel'
+      ) AS contains_nel,
       -- Non-json value
       -- OR bad formatting (no value, missing brackets)
       -- Will get picked up as NULL
-      REGEXP_EXTRACT(resp_headers, r"(?:^|.*[\s,]+)nel\s*[=]\s*({.*?})") AS nel_value,
+      (
+        SELECT header.value
+        FROM UNNEST(response_headers) AS header
+        WHERE header.name = 'nel'
+        LIMIT 1
+      ) AS nel_value,
 
     FROM unique_total_counting_table
     /* END nel_header_extracting_table */
@@ -358,7 +317,7 @@ FROM (
       type,
       ext,
       status,
-      resp_headers,
+      response_headers,
       url,
       url_domain,
 
@@ -390,7 +349,7 @@ FROM (
       type,
       ext,
       status,
-      resp_headers,
+      response_headers,
       url,
       url_domain,
 
@@ -413,7 +372,7 @@ FROM (
         type,
         ext,
         status,
-        resp_headers,
+        response_headers,
         url,
         url_domain,
 
@@ -450,7 +409,7 @@ FROM (
       type,
       ext,
       status,
-      resp_headers,
+      response_headers,
       url,
       url_domain,
       
@@ -494,7 +453,7 @@ FROM (
       type,
       ext,
       status,
-      resp_headers,
+      response_headers,
       url,
       url_domain,
       
@@ -546,10 +505,13 @@ FROM (
       -- Non-json value
       -- OR bad formatting (no value, missing brackets)
       -- Will get picked up as NULL
-      REGEXP_EXTRACT(
-          resp_headers, 
-          CONCAT(r"report[-]to\s*?[=].*([{](?:(?:[^\{]*?endpoints.*?[\[][^\[]*?[\]][^\}]*?)|(?:[^\{]*?endpoints.*?[\{][^\{]*?[\}]))?[^\]\}]*?group[\'\"][:]\s*?[\'\"]", nel_report_to, r"(?:(?:[^\}]*?endpoints[^\}]*?[\[][^\[]*?[\]][^\{]*?)|(?:[^\}]*?endpoints.*?[\{][^\{]*?[\}]))?.*?[}])")) 
-      AS rt_value,
+      (
+        SELECT header.value
+        FROM UNNEST(response_headers) AS header
+        WHERE header.name = 'report-to' AND
+        INSTR(header.value, nel_report_to) > 0
+        LIMIT 1
+      ) AS rt_value,
 
     FROM nel_url_domain_hosted_nel_resources_counting_table
     /* END rt_header_extracting_table */
